@@ -1,1 +1,16 @@
+# Robot's Logic
 
+## Main Controllers
+The two most important files are the two main controllers which are the obstacleDetector.vhdl and the globalFSM. As the latter suggests, both controllers are finite state machines that tell the robot what are the current conditions. There are two functions that have to be handled separately. The first function is wall following which allows the robot to drive along the wall on both the right and left side. That is controlled by the Obstacle Detector. The Global FSM tells the robot at what part of the track it is located at. Is the robot at the friend's house? Is the robot at the t-tunnel? THe Global FSM let's the robot know. 
+
+### Obstacle Detector Controller
+This is the finite state machine that allows the robot to wall follow either left or right. The super-state (S0) is the reset state, but once we click the button to turn on driving, the robot will go into the second state (S1) which is drive straight. The exit conditions are controlled by the sensors and how close or how far the robot is from the wall. 
+
+You can exit S1 to all the other states. If the front sensor detects that it is too close to a wall, it will go into the spin state (S2) which turns the robot by 90 degrees. S1 still has to account for when it is too close to the wall, in that situation, the robot will jump to the too close state (S3) which will slowly steer away the robot from the wall. Conversly, the too far state (S4) will steer the robot towards the wall if it is too far away from it. S3 and S4 can also enter S2 since we might want to spin while we are turning. 
+
+The two last states are special because they deal with the case where the robot has to do a pivot turn. Maybe the wall will end because we reach the end of the box. The robot has to now pivot and look for the side of the box. If the left and right sensors detect there is nothing in front, it know that it has to drive straight to prepare for the pivot. Once the back sensor also loses track of the wall, the robot can now pivot until it finds the wall again. These staights are the second straight (S5) and pivot (S6); 
+
+### Global FSM
+The GFSM is essentially telling the robot to drive straight to the friend’s house. There, it will stop, honk, and then left wall-follow. It will pivot so that it can face the left wall and drive straight until it knows when to left-wall-follow. It will do left-wall-follow until the tunnel where it will change sides by pivoting. Once it detects the right wall, it will right wall follow until the end of the course. Along the way, it will cross that hallway as it exits the T tunnel until it finds the right wall to wall-follow. It will keep driving and stop at the stop sign. It will then continue the course. Once it gets to the church, it will stop and play “It is Well with My Soul”. 
+
+To deal with the dark parts such as the church, the friends house, and the T tunnel, I primarily used the CDS cell to tell the robot if it has reached any of those three places. For turns such as the exit of the friend’s house, the IR sensors where the most beneficial since I could check when the right conditions were to go into the next state. For the stop sign, the hall sensor stopped the robot until I removed the bus from the robot’s view.
